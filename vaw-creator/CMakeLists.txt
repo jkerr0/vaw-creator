@@ -3,7 +3,7 @@
 #
 
 # Dodaj źródło do pliku wykonywalnego tego projektu.
-add_executable (vaw-creator "vaw-creator.cpp" "vaw-creator.h" "vaw-generator.h" "vaw-generator.cpp")
+add_executable (vaw-creator "vaw-creator.cpp" "vaw-creator.h" "vaw-generator.h" "vaw-generator.cpp"  "vaw-format.h" "vaw-format.cpp")
 
 if (CMAKE_VERSION VERSION_GREATER 3.12)
   set_property(TARGET vaw-creator PROPERTY CXX_STANDARD 20)
