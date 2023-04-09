@@ -2,20 +2,19 @@
 //
 
 #include "vaw-creator.h"
-#include <fstream>
+#include "vaw-generator.h"
 
 using namespace std;
 
 int main()
 {
-	const string file_name = "file.wav";
-	basic_fstream<char> vaw_fstream = fstream();
-	vaw_fstream.open(file_name, ios_base::out);
-	if (vaw_fstream.is_open())
-	{
-		cout << "File " << file_name << " opened" << endl;
-		vaw_fstream.write("abc", 3);
+	const string file_name = "my_file.wav";
+	basic_fstream<char>* vaw_fstream = new fstream();
+	vaw_generator generator = vaw_generator(1, 2, vaw_fstream, file_name);
+	generator.generate();
+	if (vaw_fstream->is_open()) {
+		cout << "Warning: file stream was open. Closing..." << endl;
+		vaw_fstream->close();
 	}
-	vaw_fstream.close();
 	return 0;
 }
