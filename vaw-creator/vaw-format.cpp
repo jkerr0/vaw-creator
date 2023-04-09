@@ -1,7 +1,7 @@
 
 #include "vaw-format.h"
 
-vaw_format::vaw_format(short num_channels, short sample_rate, short bits_per_sample) {
+vaw_format::vaw_format(short num_channels, int sample_rate, short bits_per_sample) {
 	this->num_channels = num_channels;
 	this->sample_rate = sample_rate;
 	this->bits_per_sample = bits_per_sample;

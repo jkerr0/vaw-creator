@@ -1,25 +1,22 @@
 #include "vaw-generator.h"
 #include <iostream>
 
-vaw_generator::vaw_generator(int frequency, int amplitude, std::basic_fstream<char>* file_stream, std::string file_name, vaw_format* format) {
-	this->frequency = frequency;
-	this->amplitude = amplitude;
+vaw_generator::vaw_generator(std::basic_fstream<char>* file_stream, std::string file_name, vaw_format* format, wave_generator* generator) {
 	this->file_stream = file_stream;
 	this->file_name = file_name;
 	this->format = format;
+	this->generator = generator;
+	this->data_subchunk_size = generator->get_size() * format->get_num_channels();
 }
 
-void vaw_generator::print() {
-	std::cout << frequency << " " << amplitude << std::endl;
-}
-
-void vaw_generator::generate() {
+void vaw_generator::generate_file() {
 	file_stream->open(file_name, std::ios_base::out | std::ios_base::binary);
 	file_stream->imbue(std::locale::classic());
 	if (file_stream->is_open())
 	{
 		std::cout << "File " << file_name << " opened" << std::endl;
-		riff_chunk(32);
+		int non_data_size = 36;
+		riff_chunk(non_data_size + data_subchunk_size);
 		fmt_chunk();
 		data_chunk();
 	}
@@ -53,7 +50,7 @@ void vaw_generator::riff_chunk(int chunk_size) {
 void vaw_generator::fmt_chunk() {
 	std::cout << "Generating fmt chunk" << std::endl;
 	// Subchunk1ID
-	file_stream->write("fmt", 4);
+	file_stream->write("fmt ", 4);
 
 	// Subchunk1Size
 	int fmt_chunk_size = 16;
@@ -73,8 +70,14 @@ void vaw_generator::data_chunk() {
 	file_stream->write("data", 4);
 
 	// Subchunk2Size
-	int data_chunk_size = 16;
-	write_int(data_chunk_size);
+	write_int(data_subchunk_size);
 
 	// data
+	for (int channel = 0; channel < format->get_num_channels(); channel++) {
+		std::cout << "Channel " << channel << std::endl;
+		std::vector<std::byte> channel_bytes = generator->generate();
+		for (std::byte channel_byte : channel_bytes) {
+			file_stream->put((char)channel_byte);
+		}
+	}
 }
