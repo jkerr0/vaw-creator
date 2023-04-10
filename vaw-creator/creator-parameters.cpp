@@ -64,7 +64,6 @@ void creator_parameters::print() {
 	std::cout << "Bits per sample: " << bits_per_sample << std::endl;
 	std::cout << "Frequency (Hz): " << frequency_herz << std::endl;
 	std::cout << "Duration (s): " << duration_seconds << std::endl;
-	std::cout << "Duration (s): " << duration_seconds << std::endl;
 	std::cout << "Number of channels: " << num_channels << std::endl;
 	std::cout << "File name: " << file_name << std::endl;
 	std::cout << std::endl;
