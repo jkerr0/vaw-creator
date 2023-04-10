@@ -22,8 +22,6 @@ std::vector<std::byte> wave_generator::generate()
 {
 	std::vector<std::byte> result = std::vector<std::byte>();
 	int sample_count = sample_rate * seconds_duration;
-	std::cout << "Sample rate: " << sample_rate << std::endl;
-	std::cout << "Sample count: " << sample_count << std::endl;
 	for (int sample_index = 0; sample_index < sample_count; sample_index++) {
 		std::vector<std::byte> sample = get_sample(sample_index);
 		push_sample_back(&result, &sample);

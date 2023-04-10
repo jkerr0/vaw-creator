@@ -4,7 +4,7 @@
 #include "wave-generator.h"
 #include <fstream>
 
-class vaw_generator {
+class vaw_writer {
 private:
 	std::basic_fstream<char>* file_stream;
 	std::string file_name;
@@ -20,6 +20,6 @@ private:
 	void write_short(short);
 
 public:
-	vaw_generator(std::basic_fstream<char>* file_stream, std::string file_name, vaw_format* format, wave_generator* generator);
-	void generate_file();
+	vaw_writer(std::basic_fstream<char>* file_stream, std::string file_name, vaw_format* format, wave_generator* generator);
+	void write_file();
 };
