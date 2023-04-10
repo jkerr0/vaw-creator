@@ -10,6 +10,7 @@ wave_generator::wave_generator(int seconds_duration, int sample_rate, short bits
 	this->frequency_herz = frequency_herz;
 	int safety_limit = 2000;
 	this->max_amplitude = ((1 << bits_per_sample) - 1)/2;
+	this->rest_point = bits_per_sample == 8 ? 127 : 0;
 }
 
 void push_sample_back(std::vector<std::byte>* all_samples, std::vector<std::byte>* new_samples) {
@@ -26,7 +27,6 @@ std::vector<std::byte> wave_generator::generate()
 	std::cout << "Sample count: " << sample_count << std::endl;
 	for (int sample_index = 0; sample_index < sample_count; sample_index++) {
 		std::vector<std::byte> sample = get_sample(sample_index);
-		std::cout << "sample: " << sample_index << std::endl;
 		push_sample_back(&result, &sample);
 	}
 	return result;
@@ -35,18 +35,26 @@ std::vector<std::byte> wave_generator::generate()
 std::vector<std::byte> wave_generator::get_sample(int sample_index) {
 	std::vector result = std::vector<std::byte>();
 	double time_seconds = (double) sample_index / sample_rate;
-	int sample_int = (int)get_sample_value(time_seconds);
-	for (int byte_index = 0; byte_index < bytes_per_sample; byte_index++) {
-		std::byte sample_byte = (std::byte)sample_int << (8 * byte_index);
+	double sample_double = get_sample_double_value(time_seconds);
+	if (bits_per_sample == 8) {
+		unsigned char sample_value = (unsigned char)sample_double;
+		std::byte sample_byte = (std::byte)sample_value;
 		result.push_back(sample_byte);
+	}
+	else {
+		int sample_value = (int)sample_double;
+		for (int byte_index = 0; byte_index < bytes_per_sample; byte_index++) {
+			std::byte sample_byte = (std::byte)sample_value << (8 * byte_index);
+			result.push_back(sample_byte);
+		}
 	}
 	return result;
 }
 
-double wave_generator::get_sample_value(double time_seconds) {
+double wave_generator::get_sample_double_value(double time_seconds) {
 	double pi = 3.1415;
 	double omega = 2 * pi * frequency_herz;
-	return max_amplitude * sin(omega * time_seconds);
+	return max_amplitude * sin(omega * time_seconds) + rest_point;
 }
 
 int wave_generator::get_size() {
