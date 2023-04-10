@@ -23,16 +23,18 @@ void vaw_generator::generate_file() {
 	file_stream->close();
 }
 
+// little endian
 void vaw_generator::write_short(short s) {
-	file_stream->put(s);
-	file_stream->put(s >> 8);
+	for (int byte_index = 0; byte_index < 2; byte_index++) {
+		file_stream->put(s >> (8 * byte_index));
+	}
 }
 
+// little endian
 void vaw_generator::write_int(int i) {
-	file_stream->put(i);
-	file_stream->put(i >> 8);
-	file_stream->put(i >> 16);
-	file_stream->put(i >> 24);
+	for (int byte_index = 0; byte_index < 4; byte_index++) {
+		file_stream->put(i >> (8 * byte_index));
+	}
 }
 
 void vaw_generator::riff_chunk(int chunk_size) {
@@ -74,14 +76,14 @@ void vaw_generator::data_chunk() {
 	write_int(data_subchunk_size);
 
 	// data
-	std::vector<std::byte> left_channel_bytes = generator->generate();
+	std::vector<std::byte> left_channel_bytes = generator->generate(); // default for mono
 	std::vector<std::byte> right_channel_bytes = generator->generate();
 	for (int sample_index = 0; sample_index < generator->get_sample_count(); sample_index++) {
 		for (int channel = 0; channel < format->get_num_channels(); channel++) {
 			std::vector<std::byte> channel_bytes = channel == 0 ? left_channel_bytes : right_channel_bytes;
 			int bytes_per_sample = format->get_bits_per_sample() / 8;
 			int start_byte_index = sample_index * bytes_per_sample;
-			int end_byte_index = start_byte_index + 1;
+			int end_byte_index = start_byte_index + bytes_per_sample;
 			for (int byte_index = start_byte_index; byte_index < end_byte_index; byte_index++) {
 				unsigned char channel_byte = (unsigned char)channel_bytes.at(byte_index);
 				file_stream->put(channel_byte);

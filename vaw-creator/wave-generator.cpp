@@ -43,7 +43,8 @@ std::vector<std::byte> wave_generator::get_sample(int sample_index) {
 	else if (bits_per_sample == 16) {
 		short sample_value = (short)sample_double;
 		for (int byte_index = 0; byte_index < bytes_per_sample; byte_index++) {
-			std::byte sample_byte = (std::byte)(sample_value << (8 * byte_index));
+			unsigned char current_byte = sample_value >> (8 * byte_index);
+			std::byte sample_byte = (std::byte)current_byte;
 			result.push_back(sample_byte);
 		}
 	}

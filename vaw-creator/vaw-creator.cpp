@@ -11,7 +11,7 @@ int main()
 	const int bits_per_sample = 16;
 	const int frequency_herz = 440;
 	const int duration_seconds = 2;
-	const int num_channels = 1;
+	const int num_channels = 2;
 
 	const std::string file_name = "generated_file.wav";
 	std::basic_fstream<char>* vaw_fstream = new std::fstream();
