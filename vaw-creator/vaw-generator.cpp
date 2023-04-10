@@ -32,7 +32,7 @@ void vaw_generator::write_int(int i) {
 	file_stream->put(i);
 	file_stream->put(i >> 8);
 	file_stream->put(i >> 16);
-	file_stream->put(i >> 32);
+	file_stream->put(i >> 24);
 }
 
 void vaw_generator::riff_chunk(int chunk_size) {
@@ -53,7 +53,7 @@ void vaw_generator::fmt_chunk() {
 	file_stream->write("fmt ", 4);
 
 	// Subchunk1Size
-	int fmt_chunk_size = 16;
+	unsigned int fmt_chunk_size = 16;
 	write_int(fmt_chunk_size);
 
 	write_short(format->get_audio_format());
@@ -70,6 +70,7 @@ void vaw_generator::data_chunk() {
 	file_stream->write("data", 4);
 
 	// Subchunk2Size
+	std::cout << "data sub:" << data_subchunk_size << std::endl;
 	write_int(data_subchunk_size);
 
 	// data
@@ -77,7 +78,7 @@ void vaw_generator::data_chunk() {
 		std::cout << "Channel " << channel << std::endl;
 		std::vector<std::byte> channel_bytes = generator->generate();
 		for (std::byte channel_byte : channel_bytes) {
-			file_stream->put((char)channel_byte);
+			file_stream->put((unsigned char)channel_byte);
 		}
 	}
 }
