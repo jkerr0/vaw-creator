@@ -74,11 +74,18 @@ void vaw_generator::data_chunk() {
 	write_int(data_subchunk_size);
 
 	// data
-	for (int channel = 0; channel < format->get_num_channels(); channel++) {
-		std::cout << "Channel " << channel << std::endl;
-		std::vector<std::byte> channel_bytes = generator->generate();
-		for (std::byte channel_byte : channel_bytes) {
-			file_stream->put((unsigned char)channel_byte);
+	std::vector<std::byte> left_channel_bytes = generator->generate();
+	std::vector<std::byte> right_channel_bytes = generator->generate();
+	for (int sample_index = 0; sample_index < generator->get_sample_count(); sample_index++) {
+		for (int channel = 0; channel < format->get_num_channels(); channel++) {
+			std::vector<std::byte> channel_bytes = channel == 0 ? left_channel_bytes : right_channel_bytes;
+			int bytes_per_sample = format->get_bits_per_sample() / 8;
+			int start_byte_index = sample_index * bytes_per_sample;
+			int end_byte_index = start_byte_index + 1;
+			for (int byte_index = start_byte_index; byte_index < end_byte_index; byte_index++) {
+				unsigned char channel_byte = (unsigned char)channel_bytes.at(byte_index);
+				file_stream->put(channel_byte);
+			}
 		}
 	}
 }

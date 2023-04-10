@@ -8,7 +8,6 @@ wave_generator::wave_generator(int seconds_duration, int sample_rate, short bits
 	this->bits_per_sample = bits_per_sample;
 	this->bytes_per_sample = bits_per_sample / 8;
 	this->frequency_herz = frequency_herz;
-	int safety_limit = 2000;
 	this->max_amplitude = ((1 << bits_per_sample) - 1)/2;
 	this->rest_point = bits_per_sample == 8 ? 127 : 0;
 }
@@ -41,10 +40,10 @@ std::vector<std::byte> wave_generator::get_sample(int sample_index) {
 		std::byte sample_byte = (std::byte)sample_value;
 		result.push_back(sample_byte);
 	}
-	else {
-		int sample_value = (int)sample_double;
+	else if (bits_per_sample == 16) {
+		short sample_value = (short)sample_double;
 		for (int byte_index = 0; byte_index < bytes_per_sample; byte_index++) {
-			std::byte sample_byte = (std::byte)sample_value << (8 * byte_index);
+			std::byte sample_byte = (std::byte)(sample_value << (8 * byte_index));
 			result.push_back(sample_byte);
 		}
 	}
@@ -57,7 +56,11 @@ double wave_generator::get_sample_double_value(double time_seconds) {
 	return max_amplitude * sin(omega * time_seconds) + rest_point;
 }
 
+int wave_generator::get_sample_count() {
+	return sample_rate * seconds_duration;
+}
+
 int wave_generator::get_size() {
-	return (sample_rate * seconds_duration) * (bits_per_sample / 8);
+	return get_sample_count() * bytes_per_sample;
 }
 

@@ -17,4 +17,5 @@ public:
 	wave_generator(int seconds_duration, int sample_rate, short bits_per_sample, double frequency_herz);
 	std::vector<std::byte> generate();
 	int get_size();
+	int get_sample_count();
 };
