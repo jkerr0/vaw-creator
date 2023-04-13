@@ -10,7 +10,7 @@ This CLI program generates .wav file containing a generated sine wave. User can 
 
 Example usage:
 ```
-$ ./wav_generator --sample-rate 44100 --bits 8 --freq 220 --duration 2 --channels 1 --name my_file.wav
+$ ./wav-creator.exe --sample-rate 44100 --bits 8 --freq 220 --duration 2 --channels 1 --name my_file.wav
 ```
 
 Program was created using WAVE PCM file structure description: https://ccrma.stanford.edu/courses/422-winter-2014/projects/WaveFormat/ 
